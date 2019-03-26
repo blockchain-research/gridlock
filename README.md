@@ -23,7 +23,7 @@ In the blockchain ledger, we store each bank's account balance using pedersen co
 
 ## Distributed Gridlock Resolution Protocol
 
-![protocol](https://github.ibm.com/caosj/gridlock/blob/master/image/protocol.png)
+![protocol](http://github.com/blockchain-research/gridlock/protocol.png)
 
 ## Demo
 ### Mint - Add Payment - Gross Settlement
@@ -47,7 +47,7 @@ T8 | +8 | | | | -8
 T9 | | +100 | | | -100
 T10 | +5 | | | -5 | 
 
-![demo](https://github.ibm.com/caosj/gridlock/blob/master/image/demo.png)
+![demo](http://github.com/blockchain-research/gridlock/demo.png)
 
 ## Libraries
 
