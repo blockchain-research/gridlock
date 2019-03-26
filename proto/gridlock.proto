@@ -1,0 +1,109 @@
+syntax = "proto3";
+
+package proto;
+
+
+enum StatusType {
+    ACTIVE = 0;
+    SETTLED = 1;
+}
+
+enum GLRStatusType {
+    START = 0;
+    SUCCESS = 1;
+    NETTED = 2;
+}
+
+//the zkrp is a zero-knowledge range proof of the current bank acount balance in the cmBalance
+message BankAccount {
+    int32 bankId = 1;
+    bytes cmBalance = 2;
+    bytes zkrp = 3;
+}
+
+//MintAccount message will initialize bank's accounts
+message MintAccount {
+    repeated BankAccount accounts= 1;
+}
+
+message StoredBankAccount {
+    bytes cmBalance = 1;
+}
+
+//Schema for payment message
+//sender and receiver are the ids of two parties involved
+//cmAmount is the committment of payment value
+//zkrp is a zero knowledge range proof attesting that committed value in cmAmount is within MAX> range >=0
+message PaymentMessage {
+    int32 paymentId = 1;
+    int32 sender = 2;
+    int32 receiver = 3;
+    bytes cmAmount = 4;
+    bytes zkrp = 5;
+}
+
+//StoredPaymentMessage is stored in PAYMENT_MESSAGE table, indexed by PaymentId
+message StoredPaymentMessage {
+    int32 sender = 1;
+    int32 receiver = 2;
+    bytes cmAmount = 4;
+    bytes zkrp = 5;
+    StatusType status = 6;
+}
+
+//StoredPaymentQueue is stored in PAYMENT_QUEUE_INCOMING/PAYMENT_QUEUE_OUTGOING table
+//indexed by bankId, stores the array of message Ids
+message StoredPaymentQueue {
+    repeated int32 paymentIds = 1;
+}
+
+//grosssettlement set contains the outgoing payments ids of a single bank
+//zkrp is tha zero knowledge range proof attesting that the (balance-outgoing) is within MAX>range>=0
+message GrossSettlementSet {
+    int32 bankId = 1;
+    int32 paymentId = 2;
+    bytes cmBalance = 3;
+    bytes zkrp = 4;
+}
+
+message GLRConfiguration {
+    int32 gridlockId = 1;
+    repeated int32 bankIds = 2;
+    GLRStatusType status = 3;
+}
+
+//zkrp1 is cm of (balance - outgoing + incoming) >=0
+//zkrp2 is cm of -(balance - outgoing + incoming - firstFrominfeasibleIds) >= 0
+message GridlockProposal {
+    int32 gridlockId = 1;
+    int32 bankId = 2;
+    repeated int32 outgoingIds = 3;
+    repeated int32 infeasibleIds = 4;
+    bytes cmBalance = 5;
+    bytes zkrp1 = 6;
+    bytes zkrp2 = 7;
+}
+
+message StoredGridlockProposal {
+    repeated int32 outgoingIds = 1;
+    repeated int32 infeasibleIds = 2;
+    bytes cmBalance = 3;
+    bytes zkrp1 = 4;
+    bytes zkrp2 = 5;
+}
+
+message TallyGridlockProposal {
+    int32 gridlockId = 1;
+}
+
+message NetGridlockProposal {
+    int32 gridlockId = 1;
+}
+
+//StoredPedersonGroup is the public pederson commitment parameters stored in ledger table PEDERSEN_GROUP
+message StoredPedersenGroup {
+    bytes p = 1;
+    bytes g = 2;
+    bytes q = 3;
+    bytes h = 4;
+}
